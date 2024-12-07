@@ -36,44 +36,76 @@ func getReports(filePath string) [][]int {
 	return reports
 }
 
-func main() {
-	reports := getReports("input.txt")
+func isReportSafe(report []int) bool {
+	isSafe := true
+	//  check direction (increasing/decreasing)
+	isIncreasing := report[0] < report[1]
+
+	for i := 0; i < len(report)-1; i++ {
+		a := report[i]
+		b := report[i+1]
+
+		if isIncreasing {
+			if a > b || a < b-3 || a == b {
+				isSafe = false
+				break
+			}
+		} else {
+			if a < b || a > b+3 || a == b {
+				isSafe = false
+				break
+			}
+		}
+	}
+
+	return isSafe
+}
+
+// safeReports; Part 1
+func safeReports(reports [][]int) int {
 	safeReports := 0
 
 	for _, report := range reports {
-		// fmt.Printf("Checking report number %d: %v\n", reportNumber+1, report)
-
-		//  check direction (either increasing/decreasing)
-		isIncreasing := report[0] < report[1]
-		// if isIncreasing {
-		// 	fmt.Printf("Report number %d is increasing\n", reportNumber+1)
-		// } else {
-		// 	fmt.Printf("Report number %d is decreasing\n", reportNumber+1)
-		// }
-
-		// determine whether it is safe
-		isSafeReport := true
-		for i := 0; i < len(report)-1; i++ {
-			if isIncreasing {
-				if report[i] > report[i+1] || report[i] < report[i+1]-3 || report[i] == report[i+1] {
-					// fmt.Printf("Breaking out of report  %d: %d > %d\n", reportNumber, report[i], report[i+1])
-					isSafeReport = false
-					break
-				}
-			} else {
-				if report[i] < report[i+1] || report[i] > report[i+1]+3 || report[i] == report[i+1]{
-					// fmt.Printf("Breaking out of report  %d: %d > %d\n", reportNumber, report[i], report[i+1])
-					isSafeReport = false
-					break
-				}
-			}
-		}
-
-		if isSafeReport {
-			// fmt.Printf("Report number %d is safe\n", reportNumber+1)
+		isSafe := isReportSafe(report)
+		if isSafe {
 			safeReports++
 		}
 	}
 
-	fmt.Println(safeReports)
+	return safeReports
+}
+
+// problemDampener: part 2
+func problemDampener(reports [][]int) int {
+	safeReports := 0
+
+	for _, report := range reports {
+		isSafe := isReportSafe(report)
+		if isSafe {
+			safeReports++
+		} else {
+			// remove one level and check again
+			for i := 0; i < len(report); i++ {
+				modifiedReport := make([]int, 0, len(report)-1)
+				modifiedReport = append(modifiedReport, report[:i]...)
+				modifiedReport = append(modifiedReport, report[i+1:]...)
+			
+				if isReportSafe(modifiedReport) {
+					// fmt.Printf("report %d is now safe after removing level %d\t => %v\n\n", x+1, i+1, modifiedReport)
+					safeReports += 1
+					break
+				} else{
+					// fmt.Printf("report number %d  => %v is still unsafe \t original : %v\n\n", x+1, modifiedReport, report)
+				}
+			}
+		}
+	} 
+
+	return safeReports
+}
+
+func main() {
+	reports := getReports("input.txt")
+	fmt.Println("Safe reports = ", safeReports(reports))
+	fmt.Println("Safe reports after using problem dampener = ", problemDampener(reports))
 }
