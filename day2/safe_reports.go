@@ -63,45 +63,45 @@ func isReportSafe(report []int) bool {
 
 // safeReports; Part 1
 func safeReports(reports [][]int) int {
-	safeReports := 0
+	safeReportsQuantity := 0
 
 	for _, report := range reports {
 		isSafe := isReportSafe(report)
 		if isSafe {
-			safeReports++
+			safeReportsQuantity++
 		}
 	}
 
-	return safeReports
+	return safeReportsQuantity
 }
 
 // problemDampener: part 2
 func problemDampener(reports [][]int) int {
-	safeReports := 0
+	safeReportsQuantity := 0
 
 	for _, report := range reports {
 		isSafe := isReportSafe(report)
 		if isSafe {
-			safeReports++
+			safeReportsQuantity++
 		} else {
 			// remove one level and check again
 			for i := 0; i < len(report); i++ {
 				modifiedReport := make([]int, 0, len(report)-1)
 				modifiedReport = append(modifiedReport, report[:i]...)
 				modifiedReport = append(modifiedReport, report[i+1:]...)
-			
+
 				if isReportSafe(modifiedReport) {
 					// fmt.Printf("report %d is now safe after removing level %d\t => %v\n\n", x+1, i+1, modifiedReport)
-					safeReports += 1
+					safeReportsQuantity += 1
 					break
-				} else{
+				} else {
 					// fmt.Printf("report number %d  => %v is still unsafe \t original : %v\n\n", x+1, modifiedReport, report)
 				}
 			}
 		}
-	} 
+	}
 
-	return safeReports
+	return safeReportsQuantity
 }
 
 func main() {
